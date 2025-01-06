@@ -1,14 +1,7 @@
 import express from "express";
 import cors from "cors";
 import connectDB from "./db.js";
-
-import {
-  addItem,
-  findItem,
-  updateItem,
-  deleteItem,
-  listItems,
-} from "./controllers/itemController.js"; // import controllers (cruD)
+import Item from "./models/item.js";
 
 const app = express();
 const PORT = 3000;
@@ -29,29 +22,29 @@ app.get("/", (req, res) => {
 
 // Search for items by title or description
 app.get("/api/items/search", async (req, res) => {
-  const { query } = req.query; // Get the query parameter (keyword)
+  const { keyword } = req.query; // Access query parameters
 
-  if (!query) {
-    return res.status(400).json({ error: "Please provide a search query" });
+  console.log("search keyword:", keyword); // log the keyword to the console
+
+  if (!keyword) {
+    return res.status(400).json({ error: "please provide a search keyword" });
   }
 
   try {
-    // Create a case-insensitive regex search
-    const search = new RegExp(query, "i");
+    const search = new RegExp(keyword, "i"); //case insensitve regex search
 
-    // Find items where title or description matches the query
+    // find items where title or description matches keyword
     const items = await Item.find({
       $or: [{ title: { $regex: search } }, { description: { $regex: search } }],
     });
 
-    // Return the found items as a response
+    // return the found items as a response
     res.json(items);
   } catch (error) {
     console.error("Error occurred while searching for items:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });
-
 // start server
 app.listen(PORT, () =>
   console.log(`server is running on -> http://localhost:${PORT} 🔌✅`)

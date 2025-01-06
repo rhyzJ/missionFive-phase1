@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 import Inquirer from "inquirer";
 import { Command } from "commander";
 import {
@@ -8,7 +6,7 @@ import {
   deleteItem,
   updateItem,
   listItems,
-} from "./index.js";
+} from "./controllers/itemController.js";
 
 // Item questions
 const questions = [
